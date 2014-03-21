@@ -1,5 +1,5 @@
 <?php 
-//if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * converteDataBR
  *
@@ -15,14 +15,17 @@ if (! function_exists('converteDataBR'))
 {
     function converteDataBR($data)
     {
-        list($mes,$dia,$ano) = explode('-', $data);
-        if(checkdate($mes,$dia,$ano)){
+        if(validaDataUS($data)){
+            list($mes,$dia,$ano) = explode('-', $data);
             return $dia.'/'.$mes.'/'.$ano;
         }else{
             //log_message('error', 'Argumento inválido inserido para data, na função converteDataBR()');
         }
     }
 }
+
+// ------------------------------------------------------------------------
+
 /**
  * converteDataUS
  *
@@ -38,14 +41,17 @@ if (! function_exists('converteDataUS'))
 {
     function converteDataUS($data)
     {
-        list($dia,$mes,$ano) = explode('/', $data);
-        if(checkdate($mes,$dia,$ano)){
+        if(validaDataBR($data)){
+            list($mes,$dia,$ano) = explode('/', $data);
             return $mes.'-'.$dia.'-'.$ano;
         }else{
-            //log_message('error', 'Argumento inválido inserido para data, na função converteDataUS()');
+            //log_message('error', 'Argumento inválido inserido para data, na função converteDataBR()');
         }
     }
 }
+
+// ------------------------------------------------------------------------
+
 /**
  * validaDataUS
  *
@@ -65,11 +71,8 @@ if (! function_exists('validaDataUS'))
     }
 }
 
-function validaDataBR( $data )
-{
-    list($d , $m , $a) = explode('/' , $data);
-    return checkdate($m , $d , $a);
-}
+// ------------------------------------------------------------------------
+
 /**
  * validaDataBR
  *
@@ -89,11 +92,15 @@ if (! function_exists('validaDataBR'))
     }
 }
 
+// ------------------------------------------------------------------------
+
 /**
- * Function Name
+ * mesExtenso()
  *
- * Function description
- *
+ * Retorna a data inserida
+ * em um formato extenso
+ * Retorno no formato
+ * dia de mes de ano
  * @access    public
  * @param    string data
  * @return    string data descritiva    
@@ -103,24 +110,28 @@ if (! function_exists('mesExtenso'))
 {
     function mesExtenso($data)
     {
-        list($dia , $mes , $ano) = explode('/' , $data);
-        $meses = array(
-            1 => 'janeiro',
-            2 => 'fevereiro',
-            3 => 'março',
-            4 => 'abril',
-            5 => 'maio',
-            6 => 'junho',
-            7 => 'julho',
-            8 => 'agosto',
-            9 => 'setembro',
-            10 => 'outubro',
-            11 => 'novembro',
-            12 => 'dezembro'
-            );
-        return $dia .' de '.$meses[$mes] .' de '.$ano;
+        if(validaDataBR($data)){
+            list($dia , $mes , $ano) = explode('/' , $data);
+            $meses = array(
+                1 => 'janeiro',
+                2 => 'fevereiro',
+                3 => 'março',
+                4 => 'abril',
+                5 => 'maio',
+                6 => 'junho',
+                7 => 'julho',
+                8 => 'agosto',
+                9 => 'setembro',
+                10 => 'outubro',
+                11 => 'novembro',
+                12 => 'dezembro'
+                );
+            return $dia .' de '.$meses[$mes] .' de '.$ano;
+        }
     }
 }
+
+// ------------------------------------------------------------------------
 
 /**
  * diaSemanaExtenso
@@ -153,6 +164,8 @@ if (! function_exists('diaSemanaExtenso'))
     }
 }
 
+// ------------------------------------------------------------------------
+
 /**
  * verificaAnoBissexto
  *
@@ -171,6 +184,9 @@ if (! function_exists('verificaAnoBissexto'))
         return date("L", mktime(0, 0, 0, 1, 1, $ano));
     }
 }
+
+// ------------------------------------------------------------------------
+
 /**
  * verificaDiaUtil
  *
@@ -185,12 +201,17 @@ if (! function_exists('verificaDiaUtil' ))
 {
     function verificaDiaUtil ($data)
     {
-        list($dia , $mes , $ano) = explode('/' , $data);
-        $data = mktime(0, 0, 0, $mes, $dia, $ano);
-        $diaSemana = date("w", $data);
-        return ($diaSemana != 0) && ($diaSemana != 6) ? true : false ;
+        if(validaDataBR($data)){
+            list($dia , $mes , $ano) = explode('/' , $data);
+            $data = mktime(0, 0, 0, $mes, $dia, $ano);
+            $diaSemana = date("w", $data);
+            return ($diaSemana != 0) AND ($diaSemana != 6) ? true : false ;
+        }
     }
 }
+
+// ------------------------------------------------------------------------
+
 /**
  * diaAno
  *
@@ -207,6 +228,9 @@ if (! function_exists('diaAno'))
         return date('z');
     }
 }
+
+// ------------------------------------------------------------------------
+
 /**
  * diaAno
  *
@@ -223,6 +247,9 @@ if (! function_exists('semanaAno'))
         return date('W');
     }
 }
+
+// ------------------------------------------------------------------------
+
 /**
  * SubtraindoDiasDeUmaData 
  *
